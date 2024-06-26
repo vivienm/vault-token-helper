@@ -1,0 +1,5 @@
+CREATE TABLE vault_tokens (
+    vault_addr TEXT PRIMARY KEY NOT NULL,
+    token TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

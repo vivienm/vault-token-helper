@@ -1,0 +1,17 @@
+[package]
+name = "vault-token-helper"
+version = "0.1.0"
+edition = "2021"
+description = "A token helper for HashiCorp Vault."
+repository = "https://github.com/vivienm/vault-token-helper"
+license = "MIT"
+
+[dependencies]
+anyhow = "1.0.86"
+clap = { version = "4.5.7", features = ["derive", "env"] }
+refinery = { version = "0.8.14", features = ["rusqlite"] }
+rusqlite = "0.31.0"
+thiserror = "1.0.61"
+tracing = "0.1.40"
+tracing-subscriber = "0.3.18"
+xdg = "2.5.2"
