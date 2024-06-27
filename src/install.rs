@@ -13,14 +13,15 @@ pub fn install(force: bool, interactive: bool) -> anyhow::Result<()> {
 
     let vault_path = vault_config_path()?;
 
-    if !force
-        && vault_path.exists()
-        && (!interactive
-            || !dialoguer::Confirm::new()
-                .with_prompt("Vault configuration file already exists. Overwrite?")
-                .interact()?)
-    {
-        anyhow::bail!("Vault configuration file already exists");
+    if !force && vault_path.exists() {
+        if !interactive {
+            anyhow::bail!("Vault configuration file already exists");
+        } else if !dialoguer::Confirm::new()
+            .with_prompt("Vault configuration file already exists. Overwrite?")
+            .interact()?
+        {
+            return Ok(());
+        }
     }
 
     let mut vault_file = File::create(vault_path)?;
