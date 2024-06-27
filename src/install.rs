@@ -23,17 +23,19 @@ pub fn install(force: bool, interactive: bool) -> anyhow::Result<()> {
             .with_prompt("Vault configuration file already exists. Overwrite?")
             .interact()?
         {
+            tracing::info!("Cancelled");
             return Ok(());
         }
     }
 
-    let mut vault_file = File::create(vault_path)?;
+    let mut vault_file = File::create(&vault_path)?;
     writeln!(vault_file, "# This file was created by vault-token-helper.")?;
     writeln!(
         vault_file,
         "token_helper = \"{}\"",
         hcl::escape_quoted_string(exe_path_str)
     )?;
+    tracing::info!(config_path=%vault_path.display(), "Wrote Vault configuration file");
     Ok(())
 }
 
