@@ -15,7 +15,10 @@ pub fn install(force: bool, interactive: bool) -> anyhow::Result<()> {
 
     if !force && vault_path.exists() {
         if !interactive {
-            anyhow::bail!("Vault configuration file already exists");
+            anyhow::bail!(
+                "Vault configuration file already exists: {}",
+                vault_path.display()
+            );
         } else if !dialoguer::Confirm::new()
             .with_prompt("Vault configuration file already exists. Overwrite?")
             .interact()?
