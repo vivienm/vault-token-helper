@@ -1,18 +1,22 @@
+mod hcl;
+mod install;
+mod store;
+
 use std::{
     borrow::Cow,
     io::{self, Read},
     path::PathBuf,
 };
 
-use self::store::Store;
+use install::install;
 
-mod store;
+use self::store::Store;
 
 #[derive(Debug, clap::Parser)]
 #[clap(about)]
 struct Args {
     /// The address of the Vault server.
-    #[clap(long, env = "VAULT_ADDR")]
+    #[clap(long, env = "VAULT_ADDR", default_value = "https://127.0.0.1:8200")]
     vault_addr: String,
     /// The path to the SQLite database.
     #[clap(long = "db", value_name = "DB", env = "VAULT_TOKEN_HELPER_DB")]
@@ -39,6 +43,15 @@ fn default_store_path() -> anyhow::Result<PathBuf> {
 
 #[derive(Debug, clap::Parser)]
 enum Command {
+    /// Configure Vault to use the token helper.
+    Install {
+        /// Overwrite the existing configuration.
+        #[clap(short, long)]
+        force: bool,
+        /// Prompt before overwriting the existing configuration.
+        #[clap(short, long)]
+        interactive: bool,
+    },
     /// Show a stored token.
     Get,
     /// Store a token.
@@ -59,6 +72,10 @@ fn setup_logging(log_level: tracing::level_filters::LevelFilter) -> anyhow::Resu
         .finish();
     tracing::subscriber::set_global_default(subscriber)?;
     Ok(())
+}
+
+fn command_install(force: bool, interactive: bool) -> anyhow::Result<()> {
+    install(force, interactive)
 }
 
 fn command_get(store: &Store, vault_addr: &str) -> anyhow::Result<()> {
@@ -105,6 +122,9 @@ fn main() -> anyhow::Result<()> {
     let store = store::Store::open(store_path)?;
 
     match args.command {
+        Command::Install { force, interactive } => {
+            command_install(force, interactive)?;
+        }
         Command::Get => {
             command_get(&store, &args.vault_addr)?;
         }
