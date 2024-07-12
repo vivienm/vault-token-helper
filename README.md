@@ -12,6 +12,7 @@ This allows to switch `VAULT_ADDR` back and forth without having to login each t
 Build and install the `vault-token-helper` binary:
 
 ```shell
+sudo apt install libsqlite3-dev
 cargo install --git https://github.com/vivienm/vault-token-helper.git
 ```
 
